@@ -134,7 +134,7 @@ if vista == "📋 Morbilidad":
                 xaxis=dict(range=[0, reg['Cantidad'].max() * 1.35]),
                 margin=dict(r=20)
             )
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width="stretch")
 
         with c2:
             top5 = morb['eps'].value_counts().head(5)
@@ -142,7 +142,7 @@ if vista == "📋 Morbilidad":
             pie_data = pd.concat([top5, pd.Series({'OTRAS': otras})])
             fig = px.pie(values=pie_data.values, names=pie_data.index,
                          title="Distribución por EPS (Top 5 + Otras)", hole=0.4)
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width="stretch")
 
     # ── Demografía ────────────────────────────────────────────────────────────
     with tab2:
@@ -184,7 +184,7 @@ if vista == "📋 Morbilidad":
             xaxis_title='Rango de Edad',
             legend_title='Sexo'
         )
-        st.plotly_chart(fig_pyr, use_container_width=True)
+        st.plotly_chart(fig_pyr, width="stretch")
 
         c1, c2 = st.columns(2)
         with c1:
@@ -194,14 +194,14 @@ if vista == "📋 Morbilidad":
                          color='Sexo',
                          title="Distribución por Sexo", hole=0.4,
                          color_discrete_map={'F': COLOR_F, 'M': COLOR_M})
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width="stretch")
         with c2:
             edad_cnt = morb.groupby('rango_edad').size().reindex(order_edad, fill_value=0).reset_index()
             edad_cnt.columns = ['Rango', 'Cantidad']
             fig = px.bar(edad_cnt, x='Rango', y='Cantidad', text='Cantidad',
                          title="Atenciones por Rango de Edad")
             fig.update_traces(textposition='outside')
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width="stretch")
 
     # ── Diagnósticos ──────────────────────────────────────────────────────────
     with tab3:
@@ -220,7 +220,7 @@ if vista == "📋 Morbilidad":
             textposition='outside'
         )
         fig.update_layout(xaxis=dict(range=[0, top10['Cantidad'].max() * 1.4]))
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
 
         st.subheader("Contraste Clínico por Ciclo de Vida")
 
@@ -255,7 +255,7 @@ if vista == "📋 Morbilidad":
         c1, c2 = st.columns(2)
         for col, (titulo, sub, palette) in zip([c1, c2], grupos[:2]):
             if not sub.empty:
-                col.plotly_chart(bar_ciclo(sub, titulo, palette, total_morb), use_container_width=True)
+                col.plotly_chart(bar_ciclo(sub, titulo, palette, total_morb), width="stretch")
             else:
                 col.warning(f"Sin datos para {titulo}")
 
@@ -263,7 +263,7 @@ if vista == "📋 Morbilidad":
         c3, _ = st.columns(2)
         titulo, sub, palette = grupos[2]
         if not sub.empty:
-            c3.plotly_chart(bar_ciclo(sub, titulo, palette, total_morb), use_container_width=True)
+            c3.plotly_chart(bar_ciclo(sub, titulo, palette, total_morb), width="stretch")
         else:
             c3.warning(f"Sin datos para {titulo}")
 
@@ -288,7 +288,7 @@ if vista == "📋 Morbilidad":
             xaxis=dict(range=[0, geo_top['Atenciones'].max() * 1.4]),
             yaxis=dict(autorange='reversed')
         )
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
 
         st.subheader("Atenciones por Departamento")
         dept = morb.groupby('departamento').size().reset_index(name='Atenciones')
@@ -297,7 +297,7 @@ if vista == "📋 Morbilidad":
                      title="Distribución por Departamento de Procedencia")
         fig.update_traces(textposition='outside')
         fig.update_xaxes(tickangle=45)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -360,7 +360,7 @@ else:
                           legend=dict(traceorder='normal',
                                       title='Nivel',
                                       itemsizing='constant'))
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
 
         st.subheader("Carga Promedio por Día de la Semana")
         day_order = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']
@@ -375,7 +375,7 @@ else:
                      title="Promedio Diario de Atenciones por Día de la Semana",
                      labels={'Total': 'Promedio Atenciones', 'dia_es': 'Día'})
         fig.update_traces(texttemplate='%{text:.1f}', textposition='outside')
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
 
         st.subheader("Atenciones por Hora del Día y Nivel de Triage")
         num_dias  = tri['fecha'].nunique()
@@ -390,7 +390,7 @@ else:
                      title="Promedio de Atenciones por Hora y Nivel de Triage",
                      labels={'value': 'Promedio Atenciones', 'hora': 'Hora', 'variable': 'Triage'})
         fig.update_layout(xaxis=dict(tickmode='linear', dtick=1))
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
 
         # Tabla de datos y convenciones — Triage como filas, horas como columnas
         st.markdown("**Tabla de datos — Promedio diario por hora y nivel de triage**")
@@ -398,7 +398,7 @@ else:
         tabla_display.index.name = 'Triage'
         tabla_display.columns = [f"{h:02d}:00" for h in tabla_display.columns]
         tabla_display = tabla_display.reset_index()
-        st.dataframe(tabla_display, use_container_width=True, hide_index=True)
+        st.dataframe(tabla_display, width="stretch", hide_index=True)
 
         st.markdown("**Convenciones de color — Norma colombiana de triage**")
         conv_data = {
@@ -407,7 +407,7 @@ else:
             'Descripción': ['Reanimación', 'Emergencia', 'Urgencia', 'Menos urgente', 'No urgente'],
             'Límite normativo': ['Inmediato (0 min)', '≤ 30 min', '≤ 60 min', '≤ 120 min', '≤ 360 min'],
         }
-        st.dataframe(pd.DataFrame(conv_data), use_container_width=True, hide_index=True)
+        st.dataframe(pd.DataFrame(conv_data), width="stretch", hide_index=True)
 
     # ── Tiempos de Espera ─────────────────────────────────────────────────────
     with tab2:
@@ -420,7 +420,7 @@ else:
                          color='triage', color_discrete_map=COLORES_TRIAGE,
                          title="Tiempo Promedio de Espera por Triage (min)")
             fig.update_traces(texttemplate='%{text:.1f}', textposition='outside')
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width="stretch")
 
         with c2:
             # Cumplimiento normativo con etiquetas de datos
@@ -449,7 +449,7 @@ else:
                               title="Cumplimiento vs Incumplimiento Normativo",
                               xaxis_title='Triage', yaxis_title='Atenciones',
                               legend_title='Estado')
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width="stretch")
 
         st.subheader("Tabla Comparativa: Promedio Interno vs Límite Normativo")
         limites = {'I': 0, 'II': 30, 'III': 60, 'IV': 120, 'V': 360}
@@ -460,7 +460,7 @@ else:
             sobre = (grupo['tiempo_espera_min'] > prom).sum()
             return pd.Series({'Sobre_Promedio': sobre})
 
-        sp = tri.groupby('triage').apply(sobre_promedio).reset_index()
+        sp = tri.groupby('triage').apply(sobre_promedio, include_groups=False).reset_index()
 
         resumen = tri.groupby('triage').agg(
             Total_Atenciones=('tiempo_espera_min', 'count'),
@@ -485,7 +485,7 @@ else:
         cols_tabla = ['Triage', 'Total Atenciones', 'Promedio Espera (min)',
                       'Límite Norma (min)', 'Supera Norma', '% Incumplimiento Norma',
                       'Sobre Promedio Interno', '% Sobre Promedio Interno']
-        st.dataframe(resumen[cols_tabla], use_container_width=True, hide_index=True)
+        st.dataframe(resumen[cols_tabla], width="stretch", hide_index=True)
 
     # ── IPS & Red ─────────────────────────────────────────────────────────────
     with tab3:
@@ -496,13 +496,13 @@ else:
                          orientation='h', title="Atenciones por IPS y Red",
                          text='Atenciones')
             fig.update_traces(textposition='outside')
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width="stretch")
 
         with c2:
             red_cnt = tri.groupby('red').size().reset_index(name='Atenciones')
             fig = px.pie(red_cnt, names='red', values='Atenciones',
                          title="Distribución por Red", hole=0.4)
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width="stretch")
 
         st.subheader("Tiempo de Espera Promedio por IPS")
         ips_wait = tri.groupby('ips')['tiempo_espera_min'].mean().reset_index()
@@ -511,7 +511,7 @@ else:
         fig = px.bar(ips_wait, x='Promedio (min)', y='IPS', orientation='h',
                      text='Promedio (min)', title="Tiempo Promedio de Espera por IPS")
         fig.update_traces(texttemplate='%{text:.1f}', textposition='outside')
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
 
 # ── Footer ────────────────────────────────────────────────────────────────────
 st.markdown("---")
